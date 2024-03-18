@@ -1,4 +1,4 @@
-module ValinorProtos
+module github.com/glamostoffer/ValinorProtos
 
 go 1.22.0
 
