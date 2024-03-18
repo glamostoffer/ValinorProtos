@@ -3,7 +3,6 @@ syntax = "proto3";
 import "google/protobuf/empty.proto";
 package auth;
 
-//TODO
 option go_package = "github.com/glamostoffer/ValinorProtos/auth/admin_auth";
 
 service AdminAuthService {
