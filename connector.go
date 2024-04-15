@@ -1,9 +1,9 @@
 package auth
 
 import (
-	"ValinorProtos/auth/admin_auth"
-	"ValinorProtos/auth/client_auth"
 	"context"
+	"github.com/glamostoffer/ValinorProtos/auth/admin_auth"
+	"github.com/glamostoffer/ValinorProtos/auth/client_auth"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 
