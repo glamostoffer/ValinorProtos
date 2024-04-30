@@ -35,4 +35,8 @@ message GetUserDetailsResponse {
   string name = 1;
   string surname = 2;
   string email = 3;
+  string username = 4;
+  int64 createdAt = 5;
+  int64 updatedAt = 6;
+  string role = 7;
 }
