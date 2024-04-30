@@ -31,7 +31,7 @@ const (
 type ClientAuthServiceClient interface {
 	SignUp(ctx context.Context, in *SignUpRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	SignIn(ctx context.Context, in *SignInRequest, opts ...grpc.CallOption) (*SignInResponse, error)
-	GetUserDetails(ctx context.Context, in *GetClientDetailsRequest, opts ...grpc.CallOption) (*GetUserDetailsResponse, error)
+	GetUserDetails(ctx context.Context, in *GetUserDetailsRequest, opts ...grpc.CallOption) (*GetUserDetailsResponse, error)
 }
 
 type clientAuthServiceClient struct {
@@ -60,7 +60,7 @@ func (c *clientAuthServiceClient) SignIn(ctx context.Context, in *SignInRequest,
 	return out, nil
 }
 
-func (c *clientAuthServiceClient) GetUserDetails(ctx context.Context, in *GetClientDetailsRequest, opts ...grpc.CallOption) (*GetUserDetailsResponse, error) {
+func (c *clientAuthServiceClient) GetUserDetails(ctx context.Context, in *GetUserDetailsRequest, opts ...grpc.CallOption) (*GetUserDetailsResponse, error) {
 	out := new(GetUserDetailsResponse)
 	err := c.cc.Invoke(ctx, ClientAuthService_GetUserDetails_FullMethodName, in, out, opts...)
 	if err != nil {
@@ -75,7 +75,7 @@ func (c *clientAuthServiceClient) GetUserDetails(ctx context.Context, in *GetCli
 type ClientAuthServiceServer interface {
 	SignUp(context.Context, *SignUpRequest) (*emptypb.Empty, error)
 	SignIn(context.Context, *SignInRequest) (*SignInResponse, error)
-	GetUserDetails(context.Context, *GetClientDetailsRequest) (*GetUserDetailsResponse, error)
+	GetUserDetails(context.Context, *GetUserDetailsRequest) (*GetUserDetailsResponse, error)
 	mustEmbedUnimplementedClientAuthServiceServer()
 }
 
@@ -89,7 +89,7 @@ func (UnimplementedClientAuthServiceServer) SignUp(context.Context, *SignUpReque
 func (UnimplementedClientAuthServiceServer) SignIn(context.Context, *SignInRequest) (*SignInResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SignIn not implemented")
 }
-func (UnimplementedClientAuthServiceServer) GetUserDetails(context.Context, *GetClientDetailsRequest) (*GetUserDetailsResponse, error) {
+func (UnimplementedClientAuthServiceServer) GetUserDetails(context.Context, *GetUserDetailsRequest) (*GetUserDetailsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetUserDetails not implemented")
 }
 func (UnimplementedClientAuthServiceServer) mustEmbedUnimplementedClientAuthServiceServer() {}
@@ -142,7 +142,7 @@ func _ClientAuthService_SignIn_Handler(srv interface{}, ctx context.Context, dec
 }
 
 func _ClientAuthService_GetUserDetails_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetClientDetailsRequest)
+	in := new(GetUserDetailsRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -154,7 +154,7 @@ func _ClientAuthService_GetUserDetails_Handler(srv interface{}, ctx context.Cont
 		FullMethod: ClientAuthService_GetUserDetails_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ClientAuthServiceServer).GetUserDetails(ctx, req.(*GetClientDetailsRequest))
+		return srv.(ClientAuthServiceServer).GetUserDetails(ctx, req.(*GetUserDetailsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
