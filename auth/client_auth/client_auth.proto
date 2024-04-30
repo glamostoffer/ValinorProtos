@@ -8,7 +8,7 @@ option go_package = "github.com/glamostoffer/ValinorProtos/auth/client_auth";
 service ClientAuthService {
   rpc SignUp (SignUpRequest) returns (google.protobuf.Empty);
   rpc SignIn (SignInRequest) returns (SignInResponse);
-  rpc GetClientDetails (GetClientDetailsRequest) returns (GetUserDetailsResponse);
+  rpc GetUserDetails (GetClientDetailsRequest) returns (GetUserDetailsResponse);
 }
 
 message SignUpRequest {
