@@ -8,6 +8,7 @@ option go_package = "github.com/glamostoffer/ValinorProtos/auth/admin_auth";
 service AdminAuthService {
   rpc AdminSignUp (AdminSignUpRequest) returns (google.protobuf.Empty);
   rpc BanUser (BanUserRequest) returns (google.protobuf.Empty);
+  rpc CreateInviteToken (CreateInviteTokenRequest) returns (CreateInviteTokenResponse);
 }
 
 message AdminSignUpRequest {
@@ -18,5 +19,11 @@ message AdminSignUpRequest {
 
 message BanUserRequest {
   int64 userID = 1;
+}
 
+message CreateInviteTokenRequest {
+  int64 ttl = 1;
+}
+message CreateInviteTokenResponse {
+  string token = 1;
 }

@@ -20,8 +20,9 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	AdminAuthService_AdminSignUp_FullMethodName = "/auth.AdminAuthService/AdminSignUp"
-	AdminAuthService_BanUser_FullMethodName     = "/auth.AdminAuthService/BanUser"
+	AdminAuthService_AdminSignUp_FullMethodName       = "/auth.AdminAuthService/AdminSignUp"
+	AdminAuthService_BanUser_FullMethodName           = "/auth.AdminAuthService/BanUser"
+	AdminAuthService_CreateInviteToken_FullMethodName = "/auth.AdminAuthService/CreateInviteToken"
 )
 
 // AdminAuthServiceClient is the client API for AdminAuthService service.
@@ -30,6 +31,7 @@ const (
 type AdminAuthServiceClient interface {
 	AdminSignUp(ctx context.Context, in *AdminSignUpRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	BanUser(ctx context.Context, in *BanUserRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	CreateInviteToken(ctx context.Context, in *CreateInviteTokenRequest, opts ...grpc.CallOption) (*CreateInviteTokenResponse, error)
 }
 
 type adminAuthServiceClient struct {
@@ -58,12 +60,22 @@ func (c *adminAuthServiceClient) BanUser(ctx context.Context, in *BanUserRequest
 	return out, nil
 }
 
+func (c *adminAuthServiceClient) CreateInviteToken(ctx context.Context, in *CreateInviteTokenRequest, opts ...grpc.CallOption) (*CreateInviteTokenResponse, error) {
+	out := new(CreateInviteTokenResponse)
+	err := c.cc.Invoke(ctx, AdminAuthService_CreateInviteToken_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AdminAuthServiceServer is the server API for AdminAuthService service.
 // All implementations must embed UnimplementedAdminAuthServiceServer
 // for forward compatibility
 type AdminAuthServiceServer interface {
 	AdminSignUp(context.Context, *AdminSignUpRequest) (*emptypb.Empty, error)
 	BanUser(context.Context, *BanUserRequest) (*emptypb.Empty, error)
+	CreateInviteToken(context.Context, *CreateInviteTokenRequest) (*CreateInviteTokenResponse, error)
 	mustEmbedUnimplementedAdminAuthServiceServer()
 }
 
@@ -76,6 +88,9 @@ func (UnimplementedAdminAuthServiceServer) AdminSignUp(context.Context, *AdminSi
 }
 func (UnimplementedAdminAuthServiceServer) BanUser(context.Context, *BanUserRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method BanUser not implemented")
+}
+func (UnimplementedAdminAuthServiceServer) CreateInviteToken(context.Context, *CreateInviteTokenRequest) (*CreateInviteTokenResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateInviteToken not implemented")
 }
 func (UnimplementedAdminAuthServiceServer) mustEmbedUnimplementedAdminAuthServiceServer() {}
 
@@ -126,6 +141,24 @@ func _AdminAuthService_BanUser_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AdminAuthService_CreateInviteToken_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateInviteTokenRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminAuthServiceServer).CreateInviteToken(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AdminAuthService_CreateInviteToken_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminAuthServiceServer).CreateInviteToken(ctx, req.(*CreateInviteTokenRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // AdminAuthService_ServiceDesc is the grpc.ServiceDesc for AdminAuthService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -140,6 +173,10 @@ var AdminAuthService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "BanUser",
 			Handler:    _AdminAuthService_BanUser_Handler,
+		},
+		{
+			MethodName: "CreateInviteToken",
+			Handler:    _AdminAuthService_CreateInviteToken_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
