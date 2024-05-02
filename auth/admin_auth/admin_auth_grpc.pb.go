@@ -21,6 +21,7 @@ const _ = grpc.SupportPackageIsVersion7
 
 const (
 	AdminAuthService_AdminSignUp_FullMethodName = "/auth.AdminAuthService/AdminSignUp"
+	AdminAuthService_BanUser_FullMethodName     = "/auth.AdminAuthService/BanUser"
 )
 
 // AdminAuthServiceClient is the client API for AdminAuthService service.
@@ -28,6 +29,7 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type AdminAuthServiceClient interface {
 	AdminSignUp(ctx context.Context, in *AdminSignUpRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	BanUser(ctx context.Context, in *BanUserRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type adminAuthServiceClient struct {
@@ -47,11 +49,21 @@ func (c *adminAuthServiceClient) AdminSignUp(ctx context.Context, in *AdminSignU
 	return out, nil
 }
 
+func (c *adminAuthServiceClient) BanUser(ctx context.Context, in *BanUserRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, AdminAuthService_BanUser_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AdminAuthServiceServer is the server API for AdminAuthService service.
 // All implementations must embed UnimplementedAdminAuthServiceServer
 // for forward compatibility
 type AdminAuthServiceServer interface {
 	AdminSignUp(context.Context, *AdminSignUpRequest) (*emptypb.Empty, error)
+	BanUser(context.Context, *BanUserRequest) (*emptypb.Empty, error)
 	mustEmbedUnimplementedAdminAuthServiceServer()
 }
 
@@ -61,6 +73,9 @@ type UnimplementedAdminAuthServiceServer struct {
 
 func (UnimplementedAdminAuthServiceServer) AdminSignUp(context.Context, *AdminSignUpRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AdminSignUp not implemented")
+}
+func (UnimplementedAdminAuthServiceServer) BanUser(context.Context, *BanUserRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method BanUser not implemented")
 }
 func (UnimplementedAdminAuthServiceServer) mustEmbedUnimplementedAdminAuthServiceServer() {}
 
@@ -93,6 +108,24 @@ func _AdminAuthService_AdminSignUp_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AdminAuthService_BanUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BanUserRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminAuthServiceServer).BanUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AdminAuthService_BanUser_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminAuthServiceServer).BanUser(ctx, req.(*BanUserRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // AdminAuthService_ServiceDesc is the grpc.ServiceDesc for AdminAuthService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -103,6 +136,10 @@ var AdminAuthService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "AdminSignUp",
 			Handler:    _AdminAuthService_AdminSignUp_Handler,
+		},
+		{
+			MethodName: "BanUser",
+			Handler:    _AdminAuthService_BanUser_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

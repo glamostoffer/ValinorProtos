@@ -20,9 +20,10 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	ClientAuthService_SignUp_FullMethodName         = "/auth.ClientAuthService/SignUp"
-	ClientAuthService_SignIn_FullMethodName         = "/auth.ClientAuthService/SignIn"
-	ClientAuthService_GetUserDetails_FullMethodName = "/auth.ClientAuthService/GetUserDetails"
+	ClientAuthService_SignUp_FullMethodName              = "/auth.ClientAuthService/SignUp"
+	ClientAuthService_SignIn_FullMethodName              = "/auth.ClientAuthService/SignIn"
+	ClientAuthService_GetClientDetails_FullMethodName    = "/auth.ClientAuthService/GetClientDetails"
+	ClientAuthService_UpdateClientDetails_FullMethodName = "/auth.ClientAuthService/UpdateClientDetails"
 )
 
 // ClientAuthServiceClient is the client API for ClientAuthService service.
@@ -31,7 +32,8 @@ const (
 type ClientAuthServiceClient interface {
 	SignUp(ctx context.Context, in *SignUpRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	SignIn(ctx context.Context, in *SignInRequest, opts ...grpc.CallOption) (*SignInResponse, error)
-	GetUserDetails(ctx context.Context, in *GetUserDetailsRequest, opts ...grpc.CallOption) (*GetUserDetailsResponse, error)
+	GetClientDetails(ctx context.Context, in *GetClientDetailsRequest, opts ...grpc.CallOption) (*GetClientDetailsResponse, error)
+	UpdateClientDetails(ctx context.Context, in *UpdateClientDetailsRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type clientAuthServiceClient struct {
@@ -60,9 +62,18 @@ func (c *clientAuthServiceClient) SignIn(ctx context.Context, in *SignInRequest,
 	return out, nil
 }
 
-func (c *clientAuthServiceClient) GetUserDetails(ctx context.Context, in *GetUserDetailsRequest, opts ...grpc.CallOption) (*GetUserDetailsResponse, error) {
-	out := new(GetUserDetailsResponse)
-	err := c.cc.Invoke(ctx, ClientAuthService_GetUserDetails_FullMethodName, in, out, opts...)
+func (c *clientAuthServiceClient) GetClientDetails(ctx context.Context, in *GetClientDetailsRequest, opts ...grpc.CallOption) (*GetClientDetailsResponse, error) {
+	out := new(GetClientDetailsResponse)
+	err := c.cc.Invoke(ctx, ClientAuthService_GetClientDetails_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *clientAuthServiceClient) UpdateClientDetails(ctx context.Context, in *UpdateClientDetailsRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, ClientAuthService_UpdateClientDetails_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -75,7 +86,8 @@ func (c *clientAuthServiceClient) GetUserDetails(ctx context.Context, in *GetUse
 type ClientAuthServiceServer interface {
 	SignUp(context.Context, *SignUpRequest) (*emptypb.Empty, error)
 	SignIn(context.Context, *SignInRequest) (*SignInResponse, error)
-	GetUserDetails(context.Context, *GetUserDetailsRequest) (*GetUserDetailsResponse, error)
+	GetClientDetails(context.Context, *GetClientDetailsRequest) (*GetClientDetailsResponse, error)
+	UpdateClientDetails(context.Context, *UpdateClientDetailsRequest) (*emptypb.Empty, error)
 	mustEmbedUnimplementedClientAuthServiceServer()
 }
 
@@ -89,8 +101,11 @@ func (UnimplementedClientAuthServiceServer) SignUp(context.Context, *SignUpReque
 func (UnimplementedClientAuthServiceServer) SignIn(context.Context, *SignInRequest) (*SignInResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SignIn not implemented")
 }
-func (UnimplementedClientAuthServiceServer) GetUserDetails(context.Context, *GetUserDetailsRequest) (*GetUserDetailsResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetUserDetails not implemented")
+func (UnimplementedClientAuthServiceServer) GetClientDetails(context.Context, *GetClientDetailsRequest) (*GetClientDetailsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetClientDetails not implemented")
+}
+func (UnimplementedClientAuthServiceServer) UpdateClientDetails(context.Context, *UpdateClientDetailsRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateClientDetails not implemented")
 }
 func (UnimplementedClientAuthServiceServer) mustEmbedUnimplementedClientAuthServiceServer() {}
 
@@ -141,20 +156,38 @@ func _ClientAuthService_SignIn_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ClientAuthService_GetUserDetails_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetUserDetailsRequest)
+func _ClientAuthService_GetClientDetails_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetClientDetailsRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ClientAuthServiceServer).GetUserDetails(ctx, in)
+		return srv.(ClientAuthServiceServer).GetClientDetails(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: ClientAuthService_GetUserDetails_FullMethodName,
+		FullMethod: ClientAuthService_GetClientDetails_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ClientAuthServiceServer).GetUserDetails(ctx, req.(*GetUserDetailsRequest))
+		return srv.(ClientAuthServiceServer).GetClientDetails(ctx, req.(*GetClientDetailsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ClientAuthService_UpdateClientDetails_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateClientDetailsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ClientAuthServiceServer).UpdateClientDetails(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ClientAuthService_UpdateClientDetails_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ClientAuthServiceServer).UpdateClientDetails(ctx, req.(*UpdateClientDetailsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -175,8 +208,12 @@ var ClientAuthService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _ClientAuthService_SignIn_Handler,
 		},
 		{
-			MethodName: "GetUserDetails",
-			Handler:    _ClientAuthService_GetUserDetails_Handler,
+			MethodName: "GetClientDetails",
+			Handler:    _ClientAuthService_GetClientDetails_Handler,
+		},
+		{
+			MethodName: "UpdateClientDetails",
+			Handler:    _ClientAuthService_UpdateClientDetails_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
