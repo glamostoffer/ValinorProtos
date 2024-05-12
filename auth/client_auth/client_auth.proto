@@ -28,7 +28,6 @@ message SignInResponse {
 
 message GetClientDetailsRequest {
   int64 clientID = 1;
-  string accessToken = 2;
 }
 
 message GetClientDetailsResponse {
