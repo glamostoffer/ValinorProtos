@@ -20,6 +20,7 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
+	AdminAuthService_AdminAuth_FullMethodName         = "/auth.AdminAuthService/AdminAuth"
 	AdminAuthService_AdminSignUp_FullMethodName       = "/auth.AdminAuthService/AdminSignUp"
 	AdminAuthService_BanUser_FullMethodName           = "/auth.AdminAuthService/BanUser"
 	AdminAuthService_CreateInviteToken_FullMethodName = "/auth.AdminAuthService/CreateInviteToken"
@@ -30,6 +31,7 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type AdminAuthServiceClient interface {
+	AdminAuth(ctx context.Context, in *AdminAuthRequest, opts ...grpc.CallOption) (*AdminAuthResponse, error)
 	AdminSignUp(ctx context.Context, in *AdminSignUpRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	BanUser(ctx context.Context, in *BanUserRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	CreateInviteToken(ctx context.Context, in *CreateInviteTokenRequest, opts ...grpc.CallOption) (*CreateInviteTokenResponse, error)
@@ -42,6 +44,15 @@ type adminAuthServiceClient struct {
 
 func NewAdminAuthServiceClient(cc grpc.ClientConnInterface) AdminAuthServiceClient {
 	return &adminAuthServiceClient{cc}
+}
+
+func (c *adminAuthServiceClient) AdminAuth(ctx context.Context, in *AdminAuthRequest, opts ...grpc.CallOption) (*AdminAuthResponse, error) {
+	out := new(AdminAuthResponse)
+	err := c.cc.Invoke(ctx, AdminAuthService_AdminAuth_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
 func (c *adminAuthServiceClient) AdminSignUp(ctx context.Context, in *AdminSignUpRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
@@ -84,6 +95,7 @@ func (c *adminAuthServiceClient) GetListOfUsers(ctx context.Context, in *GetList
 // All implementations must embed UnimplementedAdminAuthServiceServer
 // for forward compatibility
 type AdminAuthServiceServer interface {
+	AdminAuth(context.Context, *AdminAuthRequest) (*AdminAuthResponse, error)
 	AdminSignUp(context.Context, *AdminSignUpRequest) (*emptypb.Empty, error)
 	BanUser(context.Context, *BanUserRequest) (*emptypb.Empty, error)
 	CreateInviteToken(context.Context, *CreateInviteTokenRequest) (*CreateInviteTokenResponse, error)
@@ -95,6 +107,9 @@ type AdminAuthServiceServer interface {
 type UnimplementedAdminAuthServiceServer struct {
 }
 
+func (UnimplementedAdminAuthServiceServer) AdminAuth(context.Context, *AdminAuthRequest) (*AdminAuthResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AdminAuth not implemented")
+}
 func (UnimplementedAdminAuthServiceServer) AdminSignUp(context.Context, *AdminSignUpRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AdminSignUp not implemented")
 }
@@ -118,6 +133,24 @@ type UnsafeAdminAuthServiceServer interface {
 
 func RegisterAdminAuthServiceServer(s grpc.ServiceRegistrar, srv AdminAuthServiceServer) {
 	s.RegisterService(&AdminAuthService_ServiceDesc, srv)
+}
+
+func _AdminAuthService_AdminAuth_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AdminAuthRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminAuthServiceServer).AdminAuth(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AdminAuthService_AdminAuth_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminAuthServiceServer).AdminAuth(ctx, req.(*AdminAuthRequest))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 func _AdminAuthService_AdminSignUp_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -199,6 +232,10 @@ var AdminAuthService_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "auth.AdminAuthService",
 	HandlerType: (*AdminAuthServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "AdminAuth",
+			Handler:    _AdminAuthService_AdminAuth_Handler,
+		},
 		{
 			MethodName: "AdminSignUp",
 			Handler:    _AdminAuthService_AdminSignUp_Handler,

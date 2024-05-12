@@ -6,11 +6,15 @@ package auth;
 option go_package = "github.com/glamostoffer/ValinorProtos/auth/admin_auth";
 
 service AdminAuthService {
+  rpc AdminAuth (AdminAuthRequest) returns (AdminAuthResponse);
+
   rpc AdminSignUp (AdminSignUpRequest) returns (google.protobuf.Empty);
   rpc BanUser (BanUserRequest) returns (google.protobuf.Empty);
   rpc CreateInviteToken (CreateInviteTokenRequest) returns (CreateInviteTokenResponse);
   rpc GetListOfUsers (GetListOfUsersRequest) returns (GetListOfUsersResponse);
 }
+
+// =============== MODELS =============== //
 
 message User {
   int64 id = 1;
@@ -18,6 +22,17 @@ message User {
   string role = 3;
   int64 createdAt = 4;
   int64 updatedAt = 5;
+}
+
+// ======== REQUESTS & RESPONSES ======== //
+
+message AdminAuthRequest {
+  string AccessToken = 1;
+}
+message AdminAuthResponse {
+  int64 UserID = 1;
+  string Login = 2;
+  string Role = 3;
 }
 
 message AdminSignUpRequest {

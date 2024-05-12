@@ -20,6 +20,7 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
+	ClientAuthService_ClientAuth_FullMethodName          = "/auth.ClientAuthService/ClientAuth"
 	ClientAuthService_SignUp_FullMethodName              = "/auth.ClientAuthService/SignUp"
 	ClientAuthService_SignIn_FullMethodName              = "/auth.ClientAuthService/SignIn"
 	ClientAuthService_GetClientDetails_FullMethodName    = "/auth.ClientAuthService/GetClientDetails"
@@ -30,6 +31,7 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ClientAuthServiceClient interface {
+	ClientAuth(ctx context.Context, in *ClientAuthRequest, opts ...grpc.CallOption) (*ClientAuthResponse, error)
 	SignUp(ctx context.Context, in *SignUpRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	SignIn(ctx context.Context, in *SignInRequest, opts ...grpc.CallOption) (*SignInResponse, error)
 	GetClientDetails(ctx context.Context, in *GetClientDetailsRequest, opts ...grpc.CallOption) (*GetClientDetailsResponse, error)
@@ -42,6 +44,15 @@ type clientAuthServiceClient struct {
 
 func NewClientAuthServiceClient(cc grpc.ClientConnInterface) ClientAuthServiceClient {
 	return &clientAuthServiceClient{cc}
+}
+
+func (c *clientAuthServiceClient) ClientAuth(ctx context.Context, in *ClientAuthRequest, opts ...grpc.CallOption) (*ClientAuthResponse, error) {
+	out := new(ClientAuthResponse)
+	err := c.cc.Invoke(ctx, ClientAuthService_ClientAuth_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
 func (c *clientAuthServiceClient) SignUp(ctx context.Context, in *SignUpRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
@@ -84,6 +95,7 @@ func (c *clientAuthServiceClient) UpdateClientDetails(ctx context.Context, in *U
 // All implementations must embed UnimplementedClientAuthServiceServer
 // for forward compatibility
 type ClientAuthServiceServer interface {
+	ClientAuth(context.Context, *ClientAuthRequest) (*ClientAuthResponse, error)
 	SignUp(context.Context, *SignUpRequest) (*emptypb.Empty, error)
 	SignIn(context.Context, *SignInRequest) (*SignInResponse, error)
 	GetClientDetails(context.Context, *GetClientDetailsRequest) (*GetClientDetailsResponse, error)
@@ -95,6 +107,9 @@ type ClientAuthServiceServer interface {
 type UnimplementedClientAuthServiceServer struct {
 }
 
+func (UnimplementedClientAuthServiceServer) ClientAuth(context.Context, *ClientAuthRequest) (*ClientAuthResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ClientAuth not implemented")
+}
 func (UnimplementedClientAuthServiceServer) SignUp(context.Context, *SignUpRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SignUp not implemented")
 }
@@ -118,6 +133,24 @@ type UnsafeClientAuthServiceServer interface {
 
 func RegisterClientAuthServiceServer(s grpc.ServiceRegistrar, srv ClientAuthServiceServer) {
 	s.RegisterService(&ClientAuthService_ServiceDesc, srv)
+}
+
+func _ClientAuthService_ClientAuth_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ClientAuthRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ClientAuthServiceServer).ClientAuth(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ClientAuthService_ClientAuth_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ClientAuthServiceServer).ClientAuth(ctx, req.(*ClientAuthRequest))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 func _ClientAuthService_SignUp_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -199,6 +232,10 @@ var ClientAuthService_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "auth.ClientAuthService",
 	HandlerType: (*ClientAuthServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "ClientAuth",
+			Handler:    _ClientAuthService_ClientAuth_Handler,
+		},
 		{
 			MethodName: "SignUp",
 			Handler:    _ClientAuthService_SignUp_Handler,
