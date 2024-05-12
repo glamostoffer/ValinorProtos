@@ -23,6 +23,7 @@ const (
 	AdminAuthService_AdminSignUp_FullMethodName       = "/auth.AdminAuthService/AdminSignUp"
 	AdminAuthService_BanUser_FullMethodName           = "/auth.AdminAuthService/BanUser"
 	AdminAuthService_CreateInviteToken_FullMethodName = "/auth.AdminAuthService/CreateInviteToken"
+	AdminAuthService_GetListOfUsers_FullMethodName    = "/auth.AdminAuthService/GetListOfUsers"
 )
 
 // AdminAuthServiceClient is the client API for AdminAuthService service.
@@ -32,6 +33,7 @@ type AdminAuthServiceClient interface {
 	AdminSignUp(ctx context.Context, in *AdminSignUpRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	BanUser(ctx context.Context, in *BanUserRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	CreateInviteToken(ctx context.Context, in *CreateInviteTokenRequest, opts ...grpc.CallOption) (*CreateInviteTokenResponse, error)
+	GetListOfUsers(ctx context.Context, in *GetListOfUsersRequest, opts ...grpc.CallOption) (*GetListOfUsersResponse, error)
 }
 
 type adminAuthServiceClient struct {
@@ -69,6 +71,15 @@ func (c *adminAuthServiceClient) CreateInviteToken(ctx context.Context, in *Crea
 	return out, nil
 }
 
+func (c *adminAuthServiceClient) GetListOfUsers(ctx context.Context, in *GetListOfUsersRequest, opts ...grpc.CallOption) (*GetListOfUsersResponse, error) {
+	out := new(GetListOfUsersResponse)
+	err := c.cc.Invoke(ctx, AdminAuthService_GetListOfUsers_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AdminAuthServiceServer is the server API for AdminAuthService service.
 // All implementations must embed UnimplementedAdminAuthServiceServer
 // for forward compatibility
@@ -76,6 +87,7 @@ type AdminAuthServiceServer interface {
 	AdminSignUp(context.Context, *AdminSignUpRequest) (*emptypb.Empty, error)
 	BanUser(context.Context, *BanUserRequest) (*emptypb.Empty, error)
 	CreateInviteToken(context.Context, *CreateInviteTokenRequest) (*CreateInviteTokenResponse, error)
+	GetListOfUsers(context.Context, *GetListOfUsersRequest) (*GetListOfUsersResponse, error)
 	mustEmbedUnimplementedAdminAuthServiceServer()
 }
 
@@ -91,6 +103,9 @@ func (UnimplementedAdminAuthServiceServer) BanUser(context.Context, *BanUserRequ
 }
 func (UnimplementedAdminAuthServiceServer) CreateInviteToken(context.Context, *CreateInviteTokenRequest) (*CreateInviteTokenResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateInviteToken not implemented")
+}
+func (UnimplementedAdminAuthServiceServer) GetListOfUsers(context.Context, *GetListOfUsersRequest) (*GetListOfUsersResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetListOfUsers not implemented")
 }
 func (UnimplementedAdminAuthServiceServer) mustEmbedUnimplementedAdminAuthServiceServer() {}
 
@@ -159,6 +174,24 @@ func _AdminAuthService_CreateInviteToken_Handler(srv interface{}, ctx context.Co
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AdminAuthService_GetListOfUsers_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetListOfUsersRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminAuthServiceServer).GetListOfUsers(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AdminAuthService_GetListOfUsers_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminAuthServiceServer).GetListOfUsers(ctx, req.(*GetListOfUsersRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // AdminAuthService_ServiceDesc is the grpc.ServiceDesc for AdminAuthService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -177,6 +210,10 @@ var AdminAuthService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CreateInviteToken",
 			Handler:    _AdminAuthService_CreateInviteToken_Handler,
+		},
+		{
+			MethodName: "GetListOfUsers",
+			Handler:    _AdminAuthService_GetListOfUsers_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
