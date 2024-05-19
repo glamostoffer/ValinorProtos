@@ -1,0 +1,9 @@
+syntax = "proto3";
+
+import "google/protobuf/empty.proto";
+package chat;
+
+option go_package = "github.com/glamostoffer/ValinorProtos/chat/admin_chat";
+
+service AdminChatService {
+}

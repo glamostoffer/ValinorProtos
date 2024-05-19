@@ -1,0 +1,58 @@
+// protoc --go_out=. --go_opt=paths=source_relative --go-grpc_out=. --go-grpc_opt=paths=source_relative *.proto
+
+syntax = "proto3";
+
+import "google/protobuf/empty.proto";
+package chat;
+
+option go_package = "github.com/glamostoffer/ValinorProtos/chat/client_chat";
+
+service ClientChatService {
+  rpc CreateRoom(CreateRoomRequest) returns (CreateRoomResponse);
+  rpc GetListOfRooms(GetListOfRoomsRequest) returns (GetListOfRoomsResponse);
+  rpc AddClientToRoom(AddClientToRoomRequest) returns (google.protobuf.Empty);
+  rpc RemoveClientFromRoom(RemoveClientFromRoomRequest) returns (google.protobuf.Empty);
+}
+
+// =============== MODELS =============== //
+
+message Room {
+  int64 roomID = 1;
+  string name = 2;
+}
+
+message Message {
+  int64 roomID = 1;
+  int64 clientID = 2;
+  string message = 3;
+  int64 sendAt = 4;
+}
+
+// ======== REQUESTS & RESPONSES ======== //
+
+message CreateRoomRequest{
+  string name = 1;
+  int64 clientID = 2; // владелец комнаты
+}
+message CreateRoomResponse{
+  int64 roomID = 1;
+}
+
+message GetListOfRoomsRequest {
+  int64 clientID = 1;
+}
+message GetListOfRoomsResponse {
+  repeated Room rooms = 1;
+}
+
+message AddClientToRoomRequest {
+  int64 roomID = 1;
+  int64 clientID = 2;
+}
+
+message RemoveClientFromRoomRequest {
+  int64 roomID = 1;
+  int64 clientID = 2;
+}
+
+
