@@ -1,6 +1,6 @@
 package auth
 
 type Config struct {
-	Address string `validate:"required"`
-	DontRun bool
+	Address string `yaml:"address" validate:"required"`
+	DontRun bool   `yaml:"dont_run"`
 }
