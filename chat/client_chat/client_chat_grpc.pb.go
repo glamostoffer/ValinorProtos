@@ -26,6 +26,7 @@ const (
 	ClientChatService_GetListOfRooms_FullMethodName       = "/chat.ClientChatService/GetListOfRooms"
 	ClientChatService_AddClientToRoom_FullMethodName      = "/chat.ClientChatService/AddClientToRoom"
 	ClientChatService_RemoveClientFromRoom_FullMethodName = "/chat.ClientChatService/RemoveClientFromRoom"
+	ClientChatService_GetMessagesFromRoom_FullMethodName  = "/chat.ClientChatService/GetMessagesFromRoom"
 )
 
 // ClientChatServiceClient is the client API for ClientChatService service.
@@ -36,6 +37,7 @@ type ClientChatServiceClient interface {
 	GetListOfRooms(ctx context.Context, in *GetListOfRoomsRequest, opts ...grpc.CallOption) (*GetListOfRoomsResponse, error)
 	AddClientToRoom(ctx context.Context, in *AddClientToRoomRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	RemoveClientFromRoom(ctx context.Context, in *RemoveClientFromRoomRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	GetMessagesFromRoom(ctx context.Context, in *GetMessagesFromRoomRequest, opts ...grpc.CallOption) (*GetMessagesFromRoomResponse, error)
 }
 
 type clientChatServiceClient struct {
@@ -82,6 +84,15 @@ func (c *clientChatServiceClient) RemoveClientFromRoom(ctx context.Context, in *
 	return out, nil
 }
 
+func (c *clientChatServiceClient) GetMessagesFromRoom(ctx context.Context, in *GetMessagesFromRoomRequest, opts ...grpc.CallOption) (*GetMessagesFromRoomResponse, error) {
+	out := new(GetMessagesFromRoomResponse)
+	err := c.cc.Invoke(ctx, ClientChatService_GetMessagesFromRoom_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ClientChatServiceServer is the server API for ClientChatService service.
 // All implementations must embed UnimplementedClientChatServiceServer
 // for forward compatibility
@@ -90,6 +101,7 @@ type ClientChatServiceServer interface {
 	GetListOfRooms(context.Context, *GetListOfRoomsRequest) (*GetListOfRoomsResponse, error)
 	AddClientToRoom(context.Context, *AddClientToRoomRequest) (*emptypb.Empty, error)
 	RemoveClientFromRoom(context.Context, *RemoveClientFromRoomRequest) (*emptypb.Empty, error)
+	GetMessagesFromRoom(context.Context, *GetMessagesFromRoomRequest) (*GetMessagesFromRoomResponse, error)
 	mustEmbedUnimplementedClientChatServiceServer()
 }
 
@@ -108,6 +120,9 @@ func (UnimplementedClientChatServiceServer) AddClientToRoom(context.Context, *Ad
 }
 func (UnimplementedClientChatServiceServer) RemoveClientFromRoom(context.Context, *RemoveClientFromRoomRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RemoveClientFromRoom not implemented")
+}
+func (UnimplementedClientChatServiceServer) GetMessagesFromRoom(context.Context, *GetMessagesFromRoomRequest) (*GetMessagesFromRoomResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetMessagesFromRoom not implemented")
 }
 func (UnimplementedClientChatServiceServer) mustEmbedUnimplementedClientChatServiceServer() {}
 
@@ -194,6 +209,24 @@ func _ClientChatService_RemoveClientFromRoom_Handler(srv interface{}, ctx contex
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ClientChatService_GetMessagesFromRoom_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetMessagesFromRoomRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ClientChatServiceServer).GetMessagesFromRoom(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ClientChatService_GetMessagesFromRoom_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ClientChatServiceServer).GetMessagesFromRoom(ctx, req.(*GetMessagesFromRoomRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // ClientChatService_ServiceDesc is the grpc.ServiceDesc for ClientChatService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -216,6 +249,10 @@ var ClientChatService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "RemoveClientFromRoom",
 			Handler:    _ClientChatService_RemoveClientFromRoom_Handler,
+		},
+		{
+			MethodName: "GetMessagesFromRoom",
+			Handler:    _ClientChatService_GetMessagesFromRoom_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

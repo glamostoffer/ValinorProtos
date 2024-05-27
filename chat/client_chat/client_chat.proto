@@ -12,6 +12,7 @@ service ClientChatService {
   rpc GetListOfRooms(GetListOfRoomsRequest) returns (GetListOfRoomsResponse);
   rpc AddClientToRoom(AddClientToRoomRequest) returns (google.protobuf.Empty);
   rpc RemoveClientFromRoom(RemoveClientFromRoomRequest) returns (google.protobuf.Empty);
+  rpc GetMessagesFromRoom(GetMessagesFromRoomRequest) returns (GetMessagesFromRoomResponse);
 }
 
 // =============== MODELS =============== //
@@ -28,6 +29,7 @@ message Message {
   int64 clientID = 2;
   string message = 3;
   int64 sentAt = 4;
+  string username = 5;
 }
 
 // ======== REQUESTS & RESPONSES ======== //
@@ -57,4 +59,10 @@ message RemoveClientFromRoomRequest {
   int64 clientID = 2;
 }
 
+message GetMessagesFromRoomRequest {
+  int64 roomID = 1;
+}
 
+message GetMessagesFromRoomResponse {
+  repeated Message messages = 1;
+}
