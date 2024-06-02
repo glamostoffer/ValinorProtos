@@ -20,11 +20,12 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	AdminAuthService_AdminAuth_FullMethodName         = "/auth.AdminAuthService/AdminAuth"
-	AdminAuthService_AdminSignUp_FullMethodName       = "/auth.AdminAuthService/AdminSignUp"
-	AdminAuthService_BanUser_FullMethodName           = "/auth.AdminAuthService/BanUser"
-	AdminAuthService_CreateInviteToken_FullMethodName = "/auth.AdminAuthService/CreateInviteToken"
-	AdminAuthService_GetListOfUsers_FullMethodName    = "/auth.AdminAuthService/GetListOfUsers"
+	AdminAuthService_AdminAuth_FullMethodName          = "/auth.AdminAuthService/AdminAuth"
+	AdminAuthService_AdminSignUp_FullMethodName        = "/auth.AdminAuthService/AdminSignUp"
+	AdminAuthService_BanUser_FullMethodName            = "/auth.AdminAuthService/BanUser"
+	AdminAuthService_CreateInviteToken_FullMethodName  = "/auth.AdminAuthService/CreateInviteToken"
+	AdminAuthService_GetListOfUsers_FullMethodName     = "/auth.AdminAuthService/GetListOfUsers"
+	AdminAuthService_GetClientIDByLogin_FullMethodName = "/auth.AdminAuthService/GetClientIDByLogin"
 )
 
 // AdminAuthServiceClient is the client API for AdminAuthService service.
@@ -36,6 +37,7 @@ type AdminAuthServiceClient interface {
 	BanUser(ctx context.Context, in *BanUserRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	CreateInviteToken(ctx context.Context, in *CreateInviteTokenRequest, opts ...grpc.CallOption) (*CreateInviteTokenResponse, error)
 	GetListOfUsers(ctx context.Context, in *GetListOfUsersRequest, opts ...grpc.CallOption) (*GetListOfUsersResponse, error)
+	GetClientIDByLogin(ctx context.Context, in *GetClientIDByLoginRequest, opts ...grpc.CallOption) (*GetClientIDByLoginResponse, error)
 }
 
 type adminAuthServiceClient struct {
@@ -91,6 +93,15 @@ func (c *adminAuthServiceClient) GetListOfUsers(ctx context.Context, in *GetList
 	return out, nil
 }
 
+func (c *adminAuthServiceClient) GetClientIDByLogin(ctx context.Context, in *GetClientIDByLoginRequest, opts ...grpc.CallOption) (*GetClientIDByLoginResponse, error) {
+	out := new(GetClientIDByLoginResponse)
+	err := c.cc.Invoke(ctx, AdminAuthService_GetClientIDByLogin_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AdminAuthServiceServer is the server API for AdminAuthService service.
 // All implementations must embed UnimplementedAdminAuthServiceServer
 // for forward compatibility
@@ -100,6 +111,7 @@ type AdminAuthServiceServer interface {
 	BanUser(context.Context, *BanUserRequest) (*emptypb.Empty, error)
 	CreateInviteToken(context.Context, *CreateInviteTokenRequest) (*CreateInviteTokenResponse, error)
 	GetListOfUsers(context.Context, *GetListOfUsersRequest) (*GetListOfUsersResponse, error)
+	GetClientIDByLogin(context.Context, *GetClientIDByLoginRequest) (*GetClientIDByLoginResponse, error)
 	mustEmbedUnimplementedAdminAuthServiceServer()
 }
 
@@ -121,6 +133,9 @@ func (UnimplementedAdminAuthServiceServer) CreateInviteToken(context.Context, *C
 }
 func (UnimplementedAdminAuthServiceServer) GetListOfUsers(context.Context, *GetListOfUsersRequest) (*GetListOfUsersResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetListOfUsers not implemented")
+}
+func (UnimplementedAdminAuthServiceServer) GetClientIDByLogin(context.Context, *GetClientIDByLoginRequest) (*GetClientIDByLoginResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetClientIDByLogin not implemented")
 }
 func (UnimplementedAdminAuthServiceServer) mustEmbedUnimplementedAdminAuthServiceServer() {}
 
@@ -225,6 +240,24 @@ func _AdminAuthService_GetListOfUsers_Handler(srv interface{}, ctx context.Conte
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AdminAuthService_GetClientIDByLogin_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetClientIDByLoginRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminAuthServiceServer).GetClientIDByLogin(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AdminAuthService_GetClientIDByLogin_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminAuthServiceServer).GetClientIDByLogin(ctx, req.(*GetClientIDByLoginRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // AdminAuthService_ServiceDesc is the grpc.ServiceDesc for AdminAuthService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -251,6 +284,10 @@ var AdminAuthService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetListOfUsers",
 			Handler:    _AdminAuthService_GetListOfUsers_Handler,
+		},
+		{
+			MethodName: "GetClientIDByLogin",
+			Handler:    _AdminAuthService_GetClientIDByLogin_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

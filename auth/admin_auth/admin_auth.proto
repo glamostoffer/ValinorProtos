@@ -12,6 +12,7 @@ service AdminAuthService {
   rpc BanUser (BanUserRequest) returns (google.protobuf.Empty);
   rpc CreateInviteToken (CreateInviteTokenRequest) returns (CreateInviteTokenResponse);
   rpc GetListOfUsers (GetListOfUsersRequest) returns (GetListOfUsersResponse);
+  rpc GetClientIDByLogin (GetClientIDByLoginRequest) returns (GetClientIDByLoginResponse);
 }
 
 // =============== MODELS =============== //
@@ -59,4 +60,11 @@ message GetListOfUsersRequest {
 message GetListOfUsersResponse {
   repeated User users = 1;
   bool hasNext = 2;
+}
+
+message GetClientIDByLoginRequest {
+  string login = 1;
+}
+message GetClientIDByLoginResponse {
+  int64 clientID = 1;
 }
